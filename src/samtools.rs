@@ -2,7 +2,6 @@
 //! of other libraries and use the output of `samtools` when possible.
 use super::io::open_file;
 use anyhow::Result;
-use log::info;
 use std::collections::HashMap;
 use std::io::BufRead;
 use std::path::Path;

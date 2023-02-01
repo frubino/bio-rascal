@@ -6,7 +6,7 @@ use anyhow::{bail, Result};
 use phf::{phf_map, Map};
 use std::collections::HashMap;
 
-/// Universal Genetic Code
+/// Universal Genetic Code as HashMap, use `universal_code` instead
 pub static UNIVERSAL_CODE: Map<&'static str, &'static str> = phf_map! {
     "TTT" => "F", "TCT" => "S", "TAT" => "Y", "TGT" => "C",
     "TTC" => "F", "TCC" => "S", "TAC" => "Y", "TGC" => "C",
@@ -26,7 +26,7 @@ pub static UNIVERSAL_CODE: Map<&'static str, &'static str> = phf_map! {
     "GTG" => "V", "GCG" => "A", "GAG" => "E", "GGG" => "G",
 };
 
-/// Alternative, faster
+/// Alternative, faster lookup of codons
 pub fn universal_code(codon: &[u8]) -> Result<u8> {
     let aa = match codon {
         b"TTA" | b"TTG" | b"CTT" | b"CTC" | b"CTA" | b"CTG" => b'L',
@@ -52,7 +52,7 @@ pub fn universal_code(codon: &[u8]) -> Result<u8> {
         b"AGA" | b"AGG" => b'R',
         b"ATG" => b'M',
         b"TGG" => b'W',
-        _ => bail!("Cannot find codon {:?}", &codon),
+        _ => bail!("Cannot find codon {} in Universal Code", String::from_utf8_lossy(codon)),
     };
     Ok(aa)
 }
@@ -67,7 +67,7 @@ pub const CYTOSINE: u8 = b'C';
 pub const GUANINE: u8 = b'G';
 
 /// All nucleotides
-static NUCLEOTIDES: [u8; 4] = [ADENINE, CYTOSINE, THYMINE, GUANINE];
+pub const NUCLEOTIDES: [u8; 4] = [ADENINE, CYTOSINE, THYMINE, GUANINE];
 
 /// map of complements
 pub const REV_COMP: Map<u8, u8> = phf_map! {
@@ -78,7 +78,8 @@ pub const REV_COMP: Map<u8, u8> = phf_map! {
 };
 
 /// Given an iterator over a sequence, returns it's
-/// complement, based on `REV_COMP`.
+/// complement, based on `REV_COMP`. It is meant for
+/// tests
 pub fn complement<'a, S>(seq: S) -> Vec<u8>
 where
     S: Iterator<Item = &'a u8>,
@@ -86,6 +87,7 @@ where
     seq.map(|c| REV_COMP[c]).collect()
 }
 
+/// Type Alias for a vector of bytes
 pub type Sequence = Vec<u8>;
 
 /// A Sequence record
@@ -152,6 +154,7 @@ pub struct AaChanges {
 /// results in a synonymous and non-synonymous aminoacid change.
 ///
 /// TODO: try and use a `&'static str` instead of `String`, compare speed
+/// TODO: document how to create the equivalent function `get_expected_changes_uc`, recreate bins?
 pub fn get_exp_matrix(trans_table: &Map<&'static str, &'static str>) -> HashMap<String, AaChanges> {
     let mut syn_matrix: HashMap<String, AaChanges> = trans_table
         .keys()
@@ -185,7 +188,7 @@ pub fn get_exp_matrix(trans_table: &Map<&'static str, &'static str>) -> HashMap<
     syn_matrix
 }
 
-/// Given a sequence and the result of `get_exp_matrix` returns the number
+/// Given a sequence and the result of `get_expected_changes_uc` returns the number
 /// of expected synonymous and non-synonymous changes for the sequence.
 pub fn get_seq_exp_changes(seq: &[u8]) -> (u32, u32) {
     let mut syn: u32 = 0;
@@ -268,5 +271,11 @@ mod tests {
             let result = universal_code(key.as_bytes()).unwrap();
             assert_eq!(&std::str::from_utf8(&[result]).unwrap(), value)
         }
+    }
+    
+    #[test]
+    fn test_universal_code2() {
+        let result = universal_code("XXX".as_bytes());
+        assert!(result.is_err())
     }
 }

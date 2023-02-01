@@ -1,7 +1,7 @@
-//! Module used to read and write Fast files.
+//! Module used to read and write Fasta files.
 
 use super::sequence::SequenceRecord;
-use anyhow::Result;
+use anyhow::{Result, Context};
 use log::info;
 use std::fs::File;
 use std::io::{BufReader, Read};
@@ -26,7 +26,7 @@ where
 {
     let mut records: Vec<SequenceRecord> = vec![];
 
-    let file_handle = File::open(file_name).map(BufReader::new)?;
+    let file_handle = File::open(file_name).map(BufReader::new).context("Cannot open the Fasta file")?;
     let mut name: String = String::new();
     let mut seq: Vec<u8> = vec![];
 
@@ -63,6 +63,7 @@ where
     Ok(records)
 }
 
+/// Fasta file, used to iterate over a file
 pub struct FastaReader {
     bufreader: BufReader<Box<dyn Read>>,
     curr_seq: Vec<u8>,
@@ -70,9 +71,10 @@ pub struct FastaReader {
 }
 
 impl FastaReader {
+    /// A new FastaRead from a file name/path
     pub fn new<P: AsRef<Path>>(file_name: P) -> Result<Self> {
         info!("Opening file {}", file_name.as_ref().display());
-        let file_handle = super::io::open_file_base(file_name)?;
+        let file_handle = super::io::open_file_base(file_name).context("Cannot open fasta file")?;
         let bufreader = BufReader::new(file_handle);
         Ok(FastaReader {
             bufreader,
@@ -80,6 +82,7 @@ impl FastaReader {
             curr_seq: vec![],
         })
     }
+    /// Reads the next Fasta sequence. internally called from `next`
     pub fn read_next_sequence(&mut self) -> Option<SequenceRecord> {
         let mut line = String::new();
 

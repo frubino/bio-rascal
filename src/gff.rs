@@ -26,9 +26,8 @@ impl Default for Strand {
 }
 
 impl Strand {
-    /// Returns the value
-    /// 
-    /// Defaults to `Strand::Positive`
+    /// Returns the value of the Strand from a str, `-` will return `Negative` while
+    /// any other character will return `Positive`
     pub fn from_value(field: &str) -> Strand {
         match field {
             "-" => Strand::Negative,
@@ -66,7 +65,8 @@ pub enum Phase {
 }
 
 impl Phase {
-    // Using a u32 to avoid a cast when adding to Annotation.start
+    /// Return the equivalent phase as a numerica value. A u32 to avoid a cast when
+    /// adding to Annotation.start
     pub fn to_value(&self) -> u32 {
         match *self {
             Phase::Phase0 | Phase::NoPhase => 0,
@@ -75,7 +75,7 @@ impl Phase {
         }
     }
 
-    /// Parses a Phase field and returns the correct Value
+    /// Parses a Phase field and returns the correct Phase value
     pub fn from_value(field: &str) -> Result<Phase> {
         match field {
             "0" => Ok(Phase::Phase0),
@@ -159,6 +159,7 @@ impl Annotation {
         format!("{}:{}-{}", self.seq_id, self.start, self.end)
     }
 
+    /// Returns the full annotation sequence
     pub fn get_seq(&self, seq: &Sequence) -> Sequence {
         let start = (self.start - 1) as usize;
         let end = self.end as usize;
@@ -169,10 +170,13 @@ impl Annotation {
         }
     }
 
+    /// Returns the expected synonymous and non-synonymous
+    /// change in the annotation
     pub fn get_exp_syn(&self, seq: &Sequence) -> (u32, u32) {
         get_seq_exp_changes(&self.get_seq(&seq))
     }
 
+    /// Returns a new Annotation from a GFF line
     pub fn new<L: AsRef<str>>(line: L) -> Result<Self> {
         parse_gff_line(line, true)
     }
@@ -195,7 +199,8 @@ impl Annotation {
         pos >= self.start && pos <= self.end
     }
     
-    /// This is useful to get the codon at a specific position
+    /// Return the codon at a specific position, it won't use the `Strand` value
+    /// as this is more useful using slices and it can be passed to `sequence::reverse_comp`
     pub fn get_codon_at<'a>(&self, pos: u32, seq: &'a [u8]) -> Result<&'a [u8]> {
         let rel_pos = self.get_relative_pos(pos).context("Cannot get relative position")?;
         
@@ -289,7 +294,7 @@ impl GffReader {
         })
     }
 
-    /// Creates a GffReader from a BufReader
+    /// Creates a GffReader from a struct that implements `Read`
     pub fn from_reader(reader: Box<dyn Read>) -> Self {
         GffReader {
             bufreader: BufReader::new(reader),

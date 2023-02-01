@@ -1,5 +1,5 @@
-//! Helper I/O functions
-//!
+///! Helper I/O functions
+///!
 
 use anyhow::Result;
 use flate2::read::GzDecoder;
