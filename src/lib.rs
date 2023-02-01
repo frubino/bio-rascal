@@ -6,7 +6,3 @@ pub mod samtools;
 pub mod sequence;
 pub mod snps;
 pub mod taxon;
-
-/*
-benchmark using https://github.com/bheisler/criterion.rs
-*/

@@ -18,7 +18,7 @@ These can be mitigated with Rust, especially using a static linking. Morever, me
 
 ## Why (or why not) use this library
 
-While I am using this library for some software I am making, it may be useful for other people. Having said that, I am changing a lot inside it as I use in other projects and **it's not stable at the moment**. I think the objective for version 0.2.0 I will be to try and stabilise the API. In the meantime, it can be useful for someone else to experiment.
+While I am using this library for some software I am making, it may be useful for other people. Having said that, I am changing a lot inside it as I use in other projects and **it's not stable at the moment**. I think the objective for version 0.2.0 will be to try and stabilise the API along with the other software. In the meantime, it can be useful for someone else to experiment.
 
 ## Why not using library *X* for *Y*
 
