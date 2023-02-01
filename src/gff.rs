@@ -196,7 +196,6 @@ impl Annotation {
     }
     
     /// This is useful to get the codon at a specific position
-    /// TODO: check against: 7a04c052-e562-4891-9a98-425abcd36b70 sample H_3
     pub fn get_codon_at<'a>(&self, pos: u32, seq: &'a [u8]) -> Result<&'a [u8]> {
         let rel_pos = self.get_relative_pos(pos).context("Cannot get relative position")?;
         

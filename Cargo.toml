@@ -3,6 +3,13 @@ name = "bio_rascal"
 version = "0.1.0"
 edition = "2021"
 authors = ["Francesco Rubino"]
+license = "MIT OR Apache-2.0"
+description = "A library for bioinformatics"
+homepage = "https://github.com/frubino/bio-rascal"
+repository = "https://github.com/frubino/bio-rascal"
+keywords = ["lib", "bioinformatics", "gff", "snps", "fasta", "vcf"]
+rust-version = "1.66"
+readme = "README.md"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
