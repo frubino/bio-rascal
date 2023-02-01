@@ -179,8 +179,30 @@ impl Default for Taxonomy {
 }
 
 impl Taxonomy {
-    pub fn get_ranked_taxon(&self, taxon: u32, rank: &Rank) -> &Taxon {
-        todo!()
+    pub fn get_ranked_taxon(&self, taxon_id: u32, rank: Rank) -> Option<&Taxon> {
+        // if the taxon_id is not found, return None
+        let mut taxon = match self.get_taxon(&taxon_id) {
+            None => return None,
+            Some(taxon) => {
+                if taxon.rank <= rank {
+                    return Some(taxon)
+                }
+                taxon
+            },
+        };
+        loop {
+            taxon = match self.get_taxon(&taxon.parent_id){
+                None => break,
+                Some(taxon) => taxon,
+            };
+            if taxon.rank <= rank {
+                return Some(taxon)
+            } else if taxon.id == ROOT_TAXON {
+                break;
+            }
+        }
+
+        None
     }
 
     /// Inserts a `Taxon` into the taxonomy
