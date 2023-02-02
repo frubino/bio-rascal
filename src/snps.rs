@@ -65,10 +65,16 @@ impl CalculatePnPs for PnPs {
     }
 }
 
+/// Structure to group [PnPs] values using keys
 #[derive(Debug, Default)]
 pub struct GroupPnPs<'a> {
+    /// Gene ID
     pub gene_id: String,
+    /// Taxon ID, refering to a taxonomy
     pub taxon_id: u32,
+    /// Alternative to [GroupPnPs::taxon_id]
+    pub taxon_lineage: String,
+    /// Vector of [PnPs]
     pub pnps: Vec<&'a PnPs>,
 }
 
@@ -103,6 +109,7 @@ impl<'a> CalculatePnPs for GroupPnPs<'a> {
     }
 }
 
+/// Stores information about the `INFO` section of a [VcfRecord]
 #[derive(Debug, Default)]
 pub struct VcfRecordInfo {
     /// Indicates that the variant is an INDEL.
@@ -153,6 +160,7 @@ impl VcfRecordInfo {
     }
 }
 
+/// Last column in a [VcfRecord] and is a per-sample field
 #[derive(Debug, Default)]
 pub struct GenotypeFields {
     pub sample_name: String,
@@ -161,6 +169,7 @@ pub struct GenotypeFields {
 }
 
 impl GenotypeFields {
+    /// Parses the fields of a sample
     pub fn from_string<F: AsRef<str>>(info: F, sample: F, sample_name: F) -> Result<Self> {
         let mut g = GenotypeFields::default();
         g.sample_name = sample_name.as_ref().to_string();
@@ -180,15 +189,22 @@ impl GenotypeFields {
     }
 }
 
+/// Implements a VCF file records, use [VcfReader] to get them
 #[derive(Debug, Default)]
 pub struct VcfRecord {
+    /// Chromosome
     pub chrom: String,
+    /// 1-based position on [VcfRecord::chrom]
     pub pos: u32,
-    // Unused
+    /// Unused
     pub id: String,
+    /// Nucleotide on the Reference 
     pub ref_c: Sequence,
+    /// Alternative (SNPs) to the Reference 
     pub alt_c: Vec<Sequence>,
+    /// Quality of the SNP
     pub qual: f64,
+    /// If the filter is passed
     pub filt: String,
     pub info: VcfRecordInfo,
     pub samples: Vec<GenotypeFields>,
