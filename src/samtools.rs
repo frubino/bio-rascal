@@ -16,30 +16,30 @@ pub struct Depth {
     /// Contains the 1-based coverage, third column of the file
     ///
     /// Using u16 saves about 1/3 of memory in a test
-    coverage: Vec<u16>,
+    coverage: Vec<u32>,
 }
 
 impl Depth {
     /// Calculates the coverage at the range specified. The indices are 1-based as in `samtools`
     /// and the average coverage is calculated by also adding `0`s for positions not covered.
     /// The return value is the mean as an interger.
-    pub fn coverage_at(&self, start: &u32, end: &u32) -> u16 {
+    pub fn coverage_at(&self, start: &u32, end: &u32) -> u32 {
         let count = end - start + 1;
         self.indices
             .iter()
             .zip(self.coverage.iter())
             .filter(|x| x.0 >= start && x.0 <= end)
             .map(|x| x.1)
-            .sum::<u16>()
-            / count as u16
+            .sum::<u32>()
+            / count as u32
     }
     /// Adds a position and its coverage to the structure
-    pub fn add_value(&mut self, pos: u32, cov: u16) {
+    pub fn add_value(&mut self, pos: u32, cov: u32) {
         self.indices.push(pos);
         self.coverage.push(cov);
     }
     
-    pub fn get_coverage_list(&self, start: &u32, end: &u32) -> Vec<(u32, u16)> {
+    pub fn get_coverage_list(&self, start: &u32, end: &u32) -> Vec<(u32, u32)> {
         self.indices
             .iter()
             .zip(self.coverage.iter())
