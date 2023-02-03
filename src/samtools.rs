@@ -70,7 +70,7 @@ pub fn read_depth_file<P: AsRef<Path>>(file_name: P) -> Result<DepthMap> {
         let seq_id = fields[0].to_string();
         let pos: u32 = fields[1].parse()?;
         // Assumes that the integer is out of bound and put the maximum value
-        let cov: u16 = fields[2].parse().unwrap_or(u16::MAX);
+        let cov: u32 = fields[2].parse().unwrap_or(u32::MAX);
 
         let record = depth_map.entry(seq_id).or_default();
         record.add_value(pos, cov);
@@ -95,7 +95,7 @@ mod tests {
     fn test_depth_coverage1() {
         let mut d = Depth::default();
         let pos: Vec<u32> = Vec::from_iter(1..=5);
-        let cov: Vec<u16> = vec![4; 5];
+        let cov: Vec<u32> = vec![4; 5];
         for (p, c) in pos.iter().zip(cov.iter()) {
             d.add_value(*p, *c);
         }
@@ -107,7 +107,7 @@ mod tests {
     fn test_depth_coverage2() {
         let mut d = Depth::default();
         let pos: Vec<u32> = Vec::from_iter(1..=5);
-        let cov: Vec<u16> = vec![4; 5];
+        let cov: Vec<u32> = vec![4; 5];
         for (p, c) in pos.iter().zip(cov.iter()) {
             d.add_value(*p, *c);
         }
