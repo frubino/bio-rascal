@@ -82,6 +82,12 @@ impl FastaReader {
             curr_seq: vec![],
         })
     }
+    
+    /// TODO: Document
+    pub fn from_reader(reader: Box<dyn Read>) -> Self {
+        FastaReader { bufreader: BufReader::new(reader), curr_name: "".into(), curr_seq: vec![]}
+    }
+    
     /// Reads the next Fasta sequence. internally called from `next`
     pub fn read_next_sequence(&mut self) -> Option<SequenceRecord> {
         let mut line = String::new();

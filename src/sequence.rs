@@ -2,9 +2,9 @@
 
 use log::error;
 use crate::snps::get_expected_changes_uc;
-use anyhow::{bail, Result};
+use anyhow::{bail, Result, Context};
 use phf::{phf_map, Map};
-use std::collections::HashMap;
+use std::{collections::HashMap, io::Write};
 
 /// Universal Genetic Code as HashMap, use `universal_code` instead
 pub static UNIVERSAL_CODE: Map<&'static str, &'static str> = phf_map! {
@@ -120,6 +120,13 @@ impl SequenceRecord {
     /// sequence.
     pub fn reverse_comp(&self) -> Vec<u8> {
         reverse_comp(&self.seq)
+    }
+    
+    /// Write the sequence to a writer
+    pub fn to_file(&self, writer: &mut impl Write) -> Result<()> {
+        writeln!(writer, ">{} {}", self.id, self.attributes).context("Problem writing header")?;
+        writeln!(writer, "{}", String::from_utf8_lossy(&self.seq)).context("Problem writing sequence")?;
+        Ok(())
     }
 }
 
