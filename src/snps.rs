@@ -38,7 +38,7 @@ pub trait CalculatePnPs {
     }
 }
 
-#[derive(Debug, Default, Serialize, Deserialize, Clone, Copy)]
+#[derive(Debug, Default, Serialize, Deserialize)]
 pub struct PnPs {
     pub uid: Uuid,
     pub coverage: u32,
