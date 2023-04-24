@@ -287,7 +287,7 @@ pub struct GffReader {
 impl GffReader {
     /// Creates a GffReader from a path
     pub fn new<P: AsRef<Path>>(file_name: P) -> Result<Self> {
-        info!("Opening file {}", file_name.as_ref().display());
+        //info!("Opening file {}", file_name.as_ref().display());
         let bufreader = super::io::open_file_base(file_name)?;
         Ok(GffReader {
             bufreader: BufReader::new(bufreader),
